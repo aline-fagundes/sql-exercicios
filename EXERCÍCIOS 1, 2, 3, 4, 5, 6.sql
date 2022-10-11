@@ -1,3 +1,4 @@
+# EXERCÍCIO 1
 create table clientes(
 	codigo int primary key auto_increment,
     nome varchar(40),
@@ -96,6 +97,7 @@ drop table clientes;
 
 
 
+# EXERCÍCIO 2
 create table produtos(
 	codigo int primary key auto_increment,
     nome varchar(50),
@@ -173,6 +175,7 @@ drop table produtos;
 
 
 
+# EXERCÍCIO 3
 create table alunos(
 	nome varchar(40) primary key,
     turma varchar(10),
@@ -262,6 +265,7 @@ drop table alunos;
 
 
 
+# EXERCÍCIO 4
 create table cargos(
 	codigo int primary key auto_increment,
     nome_cargo varchar(40),
@@ -414,6 +418,7 @@ drop table cargos;
 
 
 
+# EXERCÍCIO 5
 create table marcas (
     codigo_marca int primary key auto_increment,
     nome_marca varchar(20)
@@ -516,7 +521,11 @@ where nome_produto like '%Blusa%' or nome_produto like '%Camiseta%' or nome_prod
 order by valor_produto desc;
 
 
--- 8) Exibir a soma dos valores de cada produto e agrupar por marcas que estejam vinculadas em algum produto.
+-- 8) Exibir a soma dos valores de cada produto e agrupar por marcas que estejam vinculadas a algum produto.
+select m.nome_marca as marca, truncate(sum(p.valor_produto), 2) as valor_total
+from produtos p, marcas m
+where p.codigo_marca = m.codigo_marca
+group by m.nome_marca;
 
 
 -- 9) Exibir o nome da marca que possui o produto mais caro.
@@ -526,7 +535,11 @@ inner join produtos p
 on p.codigo_marca = m.codigo_marca 
 where p.valor_produto = (select max(valor_produto) from produtos);
 
--- 10) Listar todos os produtos (nome e estoque), onde a quantidade em estoque seja maior ou igual a media total do estoque contido na tabela de produtos.
+
+-- 10) Listar todos os produtos (nome e estoque) em que a quantidade em estoque seja maior ou igual a media total do estoque contido na tabela de produtos.
+select nome_produto, quantidade_estoque 
+from produtos 
+where quantidade_estoque >= (select truncate(avg(quantidade_estoque), 0) from produtos);
 
 
 -- 11) Excluir todas as tabelas.
@@ -537,6 +550,7 @@ drop table produtos;
 
 
 
+# EXERCÍCIO 6
 create table professores(
     codigo_professor int primary key auto_increment,
     nome_professor varchar(20)
@@ -651,10 +665,10 @@ insert into alunos_turmas(codigo_aluno, codigo_materia, codigo_turma) values
     (12, 10, 1),
     (9, 8, 6);
 
--- 1) Exibir o nome do aluno, nome da matéria e nome da turma.
+-- 1) Exibir o nome do aluno, nome da materia e nome da turma.
 
 
--- 2) Nome de cada professor e matéria que leciona.
+-- 2) Nome de cada professor e materia que leciona.
 
 
 -- 3) Quantidade de alunos em cada turma.
@@ -663,23 +677,23 @@ insert into alunos_turmas(codigo_aluno, codigo_materia, codigo_turma) values
 -- 4) Quantidade de alunos por turno.
 
 
--- 5) Listar todos os alunos (nome do aluno), turma e matéria, onde o professor Renato leciona.
+-- 5) Listar todos os alunos (nome do aluno), turma e materia em que o professor Renato leciona.
 
 
--- 6) Listar o nome de todos os professores que lecionam química.
+-- 6) Listar o nome de todos os professores que lecionam quimica.
 
 
--- 7) Quais alunos estão cadastrados na matéria de história?
+-- 7) Quais alunos estão cadastrados na materia de historia?
 
 
--- 8) Nome do professor que leciona as matérias de português e inglês.
-
+-- 8) Nome do professor que leciona as materias de português e inglês.
 select p.nome as professor, m.nome as materia
     from professores as p
             inner join (select codigo, codigoProfessor from materias where nome = 'Inglês') as ing on p.codigo = ing.codigoProfessor
             inner join (select codigo, codigoProfessor from materias where nome = 'Português') as por on p.codigo = por.codigoProfessor
             inner join materias as m on m.codigoProfessor = p.codigo;
 
+# OU 
 
 select p.nome
 from professor p
@@ -688,19 +702,20 @@ where m.nome = 'português' or m.nome='inglês'
 group by p.nome
 having count(1)=2;
 
--- 9) Quantidade de alunos matriculados por matéria.
+
+-- 9) Quantidade de alunos matriculados por materia.
 
 
--- 10) Quais são os alunos que têm aula com a professor Cátia da matéria de inglês?
+-- 10) Quais são os alunos que tem aula com a professor Catia da materia de ingles?
 
 
--- 11) Quantidade de alunos da turma 6A que tem aula de matemática com o professor Renato?
+-- 11) Quantidade de alunos da turma 6A que tem aula de matematica com o professor Renato?
 
 
--- 12) Exiba quais matérias o professor Airton leciona.
+-- 12) Exiba quais materias o professor Airton leciona.
 
 
--- 13) Quantidade de alunos no período vespertino que estão tendo aula de biologia.
+-- 13) Quantidade de alunos no periodo vespertino que estão tendo aula de biologia.
 
 
 -- 14) Remover todas as tabelas.
