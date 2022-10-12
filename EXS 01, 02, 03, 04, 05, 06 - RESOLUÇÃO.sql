@@ -759,7 +759,17 @@ where p.nome_professor = 'Catia' and m.nome_materia = 'Ingles';
 
 
 -- 11) Quantidade de alunos da turma 6A que tem aula de matematica com o professor Renato?
-
+select count(*) as alunos_6a_mat_renato
+from alunos_turmas a_t
+inner join alunos a
+on a.codigo_aluno = a_t.codigo_aluno
+inner join turmas t
+on t.codigo_turma = a_t.codigo_turma
+inner join materias m
+on m.codigo_materia = a_t.codigo_materia
+inner join professores p
+on p.codigo_professor = m.codigo_professor
+where p.nome_professor = 'Renato' and m.nome_materia = 'Matematica' and t.nome_turma = '6A';
 
 
 -- 12) Exiba quais materias o professor Airton leciona.
