@@ -747,7 +747,15 @@ group by m.nome_materia;
 
 
 -- 10) Quais são os alunos que tem aula com a professor Catia da materia de ingles?
-
+select a.nome_aluno as alunos_ing_catia
+from alunos_turmas a_t
+inner join alunos a
+on a.codigo_aluno = a_t.codigo_aluno
+inner join materias m
+on m.codigo_materia = a_t.codigo_materia
+inner join professores p
+on p.codigo_professor = m.codigo_professor
+where p.nome_professor = 'Catia' and m.nome_materia = 'Ingles';
 
 
 -- 11) Quantidade de alunos da turma 6A que tem aula de matematica com o professor Renato?
