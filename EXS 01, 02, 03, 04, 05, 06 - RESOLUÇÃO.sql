@@ -739,7 +739,11 @@ having materias like '%Portugues%' and materias like '%Ingles%';
 
 
 -- 9) Quantidade de alunos matriculados por materia.
-
+select m.nome_materia as materia, count(*) qtd_alunos
+from alunos_turmas a_t
+inner join materias m
+on m.codigo_materia = a_t.codigo_materia
+group by m.nome_materia;
 
 
 -- 10) Quais são os alunos que tem aula com a professor Catia da materia de ingles?
