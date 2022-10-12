@@ -599,10 +599,10 @@ insert into materias(codigo_professor, nome_materia) values
     (7, 'Quimica'),
     (6, 'Filosofia'),
     (1, 'Fisica'),
-    (3, 'Portugue'),
+    (3, 'Portugues'),
     (3, 'Ingles'),
     (6, 'Sociologia'),
-    (5, 'Portugue'),
+    (5, 'Portugues'),
     (4, 'Historia'),
     (4, 'Sociologia'),
     (5, 'Espanhol'),
@@ -616,7 +616,7 @@ insert into turmas(nome_turma, turno_turma) values
     ('7B', 'Vespertino'),
     ('8A', 'Matutino'),
     ('8B', 'Vespertino');
-    
+
 insert into alunos(nome_aluno) values
     ('Alessandra'),
     ('Emanuela'),
@@ -666,56 +666,106 @@ insert into alunos_turmas(codigo_aluno, codigo_materia, codigo_turma) values
     (9, 8, 6);
 
 -- 1) Exibir o nome do aluno, nome da materia e nome da turma.
+select a.nome_aluno as aluno, t.nome_turma as turma, m.nome_materia as materia
+from alunos_turmas a_t
+inner join alunos a
+on a.codigo_aluno = a_t.codigo_aluno
+inner join turmas t
+on t.codigo_turma = a_t.codigo_turma
+inner join materias m
+on m.codigo_materia = a_t.codigo_materia;
 
 
 -- 2) Nome de cada professor e materia que leciona.
+select p.nome_professor as professor, m.nome_materia as materia
+from materias m
+inner join professores p
+on p.codigo_professor = m.codigo_professor;
 
 
 -- 3) Quantidade de alunos em cada turma.
+select t.nome_turma as turma, count(*) as qtd_alunos
+from turmas t, alunos_turmas a_t
+where t.codigo_turma = a_t.codigo_turma
+group by a_t.codigo_turma;
 
 
 -- 4) Quantidade de alunos por turno.
+select t.turno_turma as turno, count(*) as qtd_alunos
+from turmas t, alunos_turmas a_t
+where t.codigo_turma = a_t.codigo_turma
+group by t.turno_turma;
 
 
 -- 5) Listar todos os alunos (nome do aluno), turma e materia em que o professor Renato leciona.
+select a.nome_aluno as aluno, t.nome_turma as turma, m.nome_materia as materia, p.nome_professor as professor
+from alunos_turmas a_t
+inner join alunos a
+on a.codigo_aluno = a_t.codigo_aluno
+inner join turmas t
+on t.codigo_turma = a_t.codigo_turma
+inner join materias m
+on m.codigo_materia = a_t.codigo_materia
+inner join professores p
+on p.codigo_professor = m.codigo_professor
+where p.nome_professor = 'Renato';
 
 
 -- 6) Listar o nome de todos os professores que lecionam quimica.
+select distinct p.nome_professor as professores_quimica
+from materias m
+inner join professores p
+on p.codigo_professor = m.codigo_professor
+where m.nome_materia = 'Quimica';
 
 
 -- 7) Quais alunos estão cadastrados na materia de historia?
+select a.nome_aluno as aluno_historia
+from alunos_turmas a_t
+inner join alunos a
+on a.codigo_aluno = a_t.codigo_aluno
+inner join materias m
+on m.codigo_materia = a_t.codigo_materia
+where m.nome_materia = 'Historia';
 
 
 -- 8) Nome do professor que leciona as materias de português e inglês.
-select p.nome as professor, m.nome as materia
-    from professores as p
-            inner join (select codigo, codigoProfessor from materias where nome = 'Inglês') as ing on p.codigo = ing.codigoProfessor
-            inner join (select codigo, codigoProfessor from materias where nome = 'Português') as por on p.codigo = por.codigoProfessor
-            inner join materias as m on m.codigoProfessor = p.codigo;
-
-# OU 
-
-select p.nome
-from professor p
-left join materia m on m.professorId = p. id
-where m.nome = 'português' or m.nome='inglês'
-group by p.nome
-having count(1)=2;
+select p.nome_professor as professor, group_concat(m.nome_materia) as materias
+from professores p
+inner join materias m
+on m.codigo_professor = p.codigo_professor
+group by p.nome_professor
+having materias like '%Portugues%' and materias like '%Ingles%';
 
 
 -- 9) Quantidade de alunos matriculados por materia.
 
 
+
 -- 10) Quais são os alunos que tem aula com a professor Catia da materia de ingles?
+
 
 
 -- 11) Quantidade de alunos da turma 6A que tem aula de matematica com o professor Renato?
 
 
+
 -- 12) Exiba quais materias o professor Airton leciona.
+select distinct m.nome_materia as materias_airton 
+from materias m
+inner join professores p
+on p.codigo_professor = m.codigo_professor
+where p.nome_professor = 'Airton';
 
 
 -- 13) Quantidade de alunos no periodo vespertino que estão tendo aula de biologia.
+select count(*) as qtd_alunos_vesp_biologia
+from alunos_turmas a_t
+inner join turmas t
+on t.codigo_turma = a_t.codigo_turma
+inner join materias m
+on m.codigo_materia = a_t.codigo_materia
+where m.nome_materia = 'Biologia' and t.turno_turma = 'Vespertino';
 
 
 -- 14) Remover todas as tabelas.
