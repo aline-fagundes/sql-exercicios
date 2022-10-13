@@ -796,3 +796,156 @@ drop table materias;
 drop table turmas;
 drop table alunos;
 drop table alunos_turmas;
+
+
+
+
+
+# EXERCÍCIO 7 
+create table professores(
+    codigo_professor int primary key auto_increment,
+    nome_professor varchar(20)
+);
+
+create table cursos(
+    codigo_curso int primary key auto_increment,
+    nome_curso varchar(20),
+    valor_curso double,
+    codigo_professor int not null,
+    constraint fk_professores foreign key (codigo_professor) references professores(codigo_professor)
+);
+
+create table alunos(
+    codigo_aluno int primary key auto_increment,
+    nome_aluno varchar(20),
+    nascimento_aluno date,
+    estado_aluno varchar(20),
+    cidade_aluno varchar(40)
+);
+    
+create table alunos_cursos(
+    codigo_aluno int not null,
+    codigo_curso int not null,
+    status varchar(20),
+    constraint fk_alunos foreign key (codigo_aluno) references alunos(codigo_aluno),
+    constraint fk_cursos foreign key (codigo_curso) references cursos(codigo_curso),
+    primary key (codigo_aluno, codigo_curso)
+);
+
+insert into professores(nome_professor) values 
+	('Larissa'), 
+    ('Daniel'),
+    ('Gustavo'),
+    ('Carla'),
+    ('Guilherme'),
+    ('Carina'),
+    ('Lúcio'),
+    ('Bianca');
+
+insert into cursos(nome_curso, valor_curso, codigo_professor) values 
+	('Java - Basico', 1000, 2),
+    ('Java - Avançado', 1250, 2),
+    ('Spring Boot', 1800, 2), 
+    ('C#', 1140, 7),
+    ('ASP.NET Core', 1800, 7), 
+    ('Python', 900, 4), 
+    ('Flask', 1020, 4), 
+    ('Django', 1400, 4), 
+    ('PHP', 950, 4), 
+    ('Laravel', 1600, 4), 
+    ('Angular', 2300, 1), 
+    ('React', 2100, 1), 
+    ('HTML', 500, 8), 
+    ('CSS', 700, 8), 
+    ('JavaScript', 900, 4), 
+    ('Banco de dados', 600, 3), 
+    ('Design Patterns', 2700, 8);
+                                                        
+insert into alunos (nome_aluno, nascimento_aluno, estado_aluno, cidade_aluno) values 
+	('Aline', '1997-03-01', 'Santa Catarina', 'Blumenau'),
+	('Mariana', '1993-08-28', 'Santa Catarina', 'Joinville'),
+	('Gustavo', '2000-11-14', 'São Paulo', 'Campinas'),
+	('Bianca', '1999-01-07', 'Santa Catarina', 'Blumenau'),
+    ('Ricardo', '2002-07-30', 'Parana', 'Curitiba'),
+    ('Tamara', '2005-02-22', 'São Paulo', 'São Paulo'),
+    ('Juliano', '1986-09-19', 'Parana', 'Londrina'),
+    ('Fernanda', '1987-01-28', 'São Paulo', 'São Paulo'),
+    ('Alice', '2001-06-13', 'Santa Catarina', 'Blumenau'),
+    ('Henrique', '1991-01-24', 'Rio de Janeiro', 'Niteroi'),
+    ('Marcelo', '1988-12-08', 'Parana', 'Curitiba'),
+    ('Daniela', '1998-10-14', 'Santa Catarina', 'Florianopolis'),
+    ('Caroline', '2002-04-10', 'Parana', 'Maringa'),
+    ('Leticia', '1993-08-22', 'São Paulo', 'São Paulo'),
+    ('Mauro', '1996-09-08', 'Santa Catarina', 'Jaragua do Sul');
+                                                            
+insert into alunos_cursos (codigo_aluno, codigo_curso, status) values 
+	(1, 2, 'Concluído'), 
+    (3, 6, 'Em andamento'), 
+    (1, 7, 'Concluído'), 
+    (4, 2, 'Em andamento'), 
+    (9, 16, 'Não iniciado'), 
+    (8, 10, 'Concluído'),
+    (1, 4, 'Concluído'),
+    (4, 9, 'Não iniciado'),
+    (10, 2, 'Em andamento'),
+    (7, 1, 'Concluído'),
+    (12, 2, 'Não iniciado'),
+    (2, 1, 'Não iniciado'),
+    (15, 7, 'Não iniciado'),
+    (11, 2, 'Concluído'),
+    (6, 13, 'Em andamento'),
+    (3, 4, 'Em andamento'),
+    (4, 10, 'Em andamento'),
+    (9, 17, 'Concluído'),
+    (1, 5, 'Em andamento'),
+    (10, 8, 'Em andamento');
+                                                                    
+-- 1) Listar a quantidade de cursos que cada aluno esteja participando. Deverá obrigatoriamente exibir o nome de todos os alunos e a quantidade de cursos.
+select nome_aluno, count(ac.codigo_curso) as qtd_cursos 
+from alunos a
+inner join alunos_cursos ac
+on ac.codigo_aluno = a.codigo_aluno
+group by a.nome_aluno;
+
+
+-- 2) Exibir a quantidade de cursos atraves do status.
+
+
+-- 3) Exiba o nome do aluno e o nome do curso, onde o status esteja concluido e o valor do curso seja de pelo menos R$1.000,00.
+
+
+-- 4) Exibir a quantidade de alunos, agrupando pelo estado onde vive.
+
+
+-- 5) Listar o nome dos alunos e o nome dos cursos, onde o status seja Não iniciado.
+
+
+-- 6) Exiba o nome dos alunos e quantidade de cursos que estão cadastrados, onde a idade seja inferior a 18 anos (devera levar em consideração a data e hora atuais).
+
+
+-- 7) Exiba o nome do curso mais caro, seu valor e a quantidade de alunos que estão participando.
+
+
+-- 8) Exiba os nomes de todos os professores e a quantidade de cursos que eles lecionam.
+
+
+-- 9) Exiba o nome de todos os professores e a quantidade de alunos que participam de todos os cursos.
+
+
+-- 10) Exibir o nome de todos os alunos, alem do nome do curso, valor do curso e nome do professor contidos na tabela alunos_cursos.
+
+
+-- 11) Realize a media dos valores comercializados em todos os cursos.
+
+
+-- 12) Retorne o nome do curso, valor e quantidade de alunos, onde o valor do curso seja maior ou igual a media.
+
+
+-- 13) Remover todos os alunos com idade superior a 30 anos.
+
+
+-- 14) Excluir todas as tabelas.
+drop table alunos_cursos;
+drop table cursos;
+drop table alunos;
+drop table professores;
