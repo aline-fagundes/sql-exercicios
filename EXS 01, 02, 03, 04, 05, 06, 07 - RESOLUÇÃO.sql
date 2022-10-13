@@ -927,6 +927,7 @@ group by status;
 -- 3) Exiba o nome do aluno e o nome do curso, onde o status esteja concluido e o valor do curso seja de pelo menos R$1.000,00.
 
 
+
 -- 4) Exibir a quantidade de alunos, agrupando pelo estado onde vive.
 
 
@@ -955,6 +956,13 @@ group by status;
 
 
 -- 13) Remover todos os alunos com idade superior a 30 anos.
+alter table alunos_cursos
+add constraint foreign key(codigo_aluno)
+references alunos(codigo_aluno) on delete cascade;
+
+delete
+from alunos
+where timestampdiff(year, nascimento_aluno, current_date) >= 30;
 
 
 -- 14) Excluir todas as tabelas.
