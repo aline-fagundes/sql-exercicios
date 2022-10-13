@@ -925,7 +925,13 @@ group by status;
 
 
 -- 3) Exiba o nome do aluno e o nome do curso, onde o status esteja concluido e o valor do curso seja de pelo menos R$1.000,00.
-
+select a.nome_aluno as aluno, c.nome_curso as curso, ac.status
+from alunos_cursos ac
+inner join cursos c
+on c.codigo_curso = ac.codigo_curso
+inner join alunos a
+on a.codigo_aluno = ac.codigo_aluno
+where ac.status = 'Concluído' and c.valor_curso >= 1000;
 
 
 -- 4) Exibir a quantidade de alunos, agrupando pelo estado onde vive.
@@ -947,12 +953,36 @@ group by status;
 
 
 -- 10) Exibir o nome de todos os alunos, alem do nome do curso, valor do curso e nome do professor contidos na tabela alunos_cursos.
+select a.nome_aluno as aluno, c.nome_curso as curso, c.valor_curso as valor, p.nome_professor as professor
+from alunos_cursos ac
+inner join cursos c
+on c.codigo_curso = ac.codigo_curso
+inner join alunos a
+on a.codigo_aluno = ac.codigo_aluno
+inner join professores p
+on p.codigo_professor = c.codigo_professor;
 
 
 -- 11) Realize a media dos valores comercializados em todos os cursos.
+select round(avg(valor_curso), 2) as media_valor
+from cursos;
 
 
 -- 12) Retorne o nome do curso, valor e quantidade de alunos, onde o valor do curso seja maior ou igual a media.
+select c.nome_curso as curso, c.valor_curso as valor, count(ac.codigo_aluno) as qtd_alunos
+from alunos_cursos ac
+inner join cursos c
+on c.codigo_curso = ac.codigo_curso
+where c.valor_curso >= (select round(avg(valor_curso), 2) from cursos)
+group by c.nome_curso;
+
+# OU
+
+select c.nome_curso as curso, c.valor_curso as valor, count(ac.codigo_aluno) as qtd_alunos
+from alunos_cursos ac, cursos c
+where ac.codigo_curso = c.codigo_curso
+and c.valor_curso >= (select round(avg(valor_curso), 2) from cursos)
+group by c.nome_curso;
 
 
 -- 13) Remover todos os alunos com idade superior a 30 anos.
