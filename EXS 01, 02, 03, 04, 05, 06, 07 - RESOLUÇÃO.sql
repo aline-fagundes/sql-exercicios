@@ -737,6 +737,16 @@ on m.codigo_professor = p.codigo_professor
 group by p.nome_professor
 having materias like '%Portugues%' and materias like '%Ingles%';
 
+# OU
+
+select p.nome_professor
+from professores p
+inner join materias m
+on p.codigo_professor = m.codigo_professor
+where m.nome_materia in ("Portugues","Ingles")
+group by p.nome_professor
+having count(distinct m.nome_materia) = 2;
+
 
 -- 9) Quantidade de alunos matriculados por materia.
 select m.nome_materia as materia, count(*) qtd_alunos
@@ -903,12 +913,15 @@ insert into alunos_cursos (codigo_aluno, codigo_curso, status) values
 -- 1) Listar a quantidade de cursos que cada aluno esteja participando. Deverá obrigatoriamente exibir o nome de todos os alunos e a quantidade de cursos.
 select nome_aluno, count(ac.codigo_curso) as qtd_cursos 
 from alunos a
-inner join alunos_cursos ac
+left join alunos_cursos ac
 on ac.codigo_aluno = a.codigo_aluno
 group by a.nome_aluno;
 
 
 -- 2) Exibir a quantidade de cursos atraves do status.
+select status, count(codigo_curso) as qtd_cursos
+from alunos_cursos
+group by status;
 
 
 -- 3) Exiba o nome do aluno e o nome do curso, onde o status esteja concluido e o valor do curso seja de pelo menos R$1.000,00.
