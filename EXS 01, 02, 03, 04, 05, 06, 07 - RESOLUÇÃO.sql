@@ -849,7 +849,7 @@ insert into professores(nome_professor) values
     ('Carla'),
     ('Guilherme'),
     ('Carina'),
-    ('Lúcio'),
+    ('Lucio'),
     ('Bianca');
 
 insert into cursos(nome_curso, valor_curso, codigo_professor) values 
@@ -935,21 +935,53 @@ where ac.status = 'Concluído' and c.valor_curso >= 1000;
 
 
 -- 4) Exibir a quantidade de alunos, agrupando pelo estado onde vive.
+select a.estado_aluno as estado, count(ac.codigo_aluno) as qtd_alunos
+from alunos_cursos ac, alunos a
+where ac.codigo_aluno = a.codigo_aluno
+group by a.estado_aluno;
 
 
--- 5) Listar o nome dos alunos e o nome dos cursos, onde o status seja Não iniciado.
+-- 5) Listar o nome dos alunos e o nome dos cursos, em que o status seja 'Não iniciado'.
+select a.nome_aluno as aluno, c.nome_curso as curso, ac.status
+from alunos_cursos ac
+inner join cursos c
+on c.codigo_curso = ac.codigo_curso
+inner join alunos a
+on a.codigo_aluno = ac.codigo_aluno
+where ac.status = 'Não iniciado';
 
 
--- 6) Exiba o nome dos alunos e quantidade de cursos que estão cadastrados, onde a idade seja inferior a 18 anos (devera levar em consideração a data e hora atuais).
+-- 6) Exiba o nome dos alunos e quantidade de cursos em que estão cadastrados para os que tenham idade inferior a 18 anos (devera levar em consideração a data e hora atuais).
+select a.nome_aluno as aluno, count(ac.codigo_curso) as qtd_cursos
+from alunos_cursos ac, alunos a
+where ac.codigo_aluno = a.codigo_aluno 
+and timestampdiff(year, nascimento_aluno, current_date) < 18
+group by a.nome_aluno;
 
 
 -- 7) Exiba o nome do curso mais caro, seu valor e a quantidade de alunos que estão participando.
+select c.nome_curso as curso, c.valor_curso as valor, count(ac.codigo_aluno) as qtd_alunos
+from cursos c, alunos_cursos ac
+where c.codigo_curso = ac.codigo_curso
+and c.valor_curso = (select max(valor_curso) from cursos)
+group by c.nome_curso;
 
 
 -- 8) Exiba os nomes de todos os professores e a quantidade de cursos que eles lecionam.
+select p.nome_professor as professor, count(c.codigo_professor) as qtd_cursos
+from cursos c, professores p
+where c.codigo_professor = p.codigo_professor
+group by p.nome_professor;
 
 
--- 9) Exiba o nome de todos os professores e a quantidade de alunos que participam de todos os cursos.
+-- 9) Exiba o nome de todos os professores e a quantidade de alunos que participam dos cursos lecionados por eles.
+select p.nome_professor as professor, count(ac.codigo_aluno) as qtd_alunos
+from alunos_cursos ac
+inner join cursos c
+on c.codigo_curso = ac.codigo_curso
+inner join professores p
+on p.codigo_professor = c.codigo_professor
+group by p.nome_professor;
 
 
 -- 10) Exibir o nome de todos os alunos, alem do nome do curso, valor do curso e nome do professor contidos na tabela alunos_cursos.
@@ -989,7 +1021,6 @@ group by c.nome_curso;
 alter table alunos_cursos
 add constraint foreign key(codigo_aluno)
 references alunos(codigo_aluno) on delete cascade;
-
 delete
 from alunos
 where timestampdiff(year, nascimento_aluno, current_date) >= 30;
