@@ -1031,3 +1031,140 @@ drop table alunos_cursos;
 drop table cursos;
 drop table alunos;
 drop table professores;
+
+
+
+
+
+# EXERCÍCIO 8
+-- 1) Criar uma tabela chamada clientes.
+create table clientes(
+    codigo_cliente int primary key,
+    nome_cliente varchar(30),
+    email_cliente varchar(50)
+); 
+
+
+-- 2) Criar uma sequência para a coluna codigo_cliente.
+DELIMITER $$
+create procedure inserir_codigo()
+begin
+	insert into clientes(codigo_cliente) 
+    values((select last_insert_id()));
+end $$
+DELIMITER ;
+
+call inserir_codigo();
+select * from clientes;
+
+
+-- 3) Criar uma procedure para cadastrar os clientes, os parâmetros obrigatórios serão: nome e e-mail.
+DELIMITER $$
+create procedure cadastrar_cliente(in nome varchar(30), in email varchar(50)) 
+begin
+	declare codigo int;
+    set codigo = (select ifnull(max(codigo_cliente), 0) + 1 from clientes);
+    if(nome is not null and email is not null)
+		then 
+        insert into clientes(codigo_cliente, nome_cliente, email_cliente) 
+        values(codigo, nome, email);
+	end if;
+end $$
+DELIMITER ;
+
+# OU
+
+DELIMITER $$
+create procedure cadastrar_cliente(in nome varchar(30), in email varchar(50)) 
+begin
+	declare msg varchar(100);
+    declare codigo int;
+	select ifnull(max(codigo_cliente), 0) + 1 into codigo from clientes;
+    if(nome is not null and email is not null)
+		then 
+        insert into clientes(codigo_cliente, nome_cliente, email_cliente) 
+        values(codigo, nome, email);
+        set msg = 'Cliente cadastrado com sucesso!';
+	end if;
+    select msg;
+end $$
+DELIMITER ;
+
+
+-- 4) Insira um cliente através da procedure criada.
+call cadastrar_cliente('Aline', 'aline@email.com');
+select * from clientes;
+
+
+-- 5) Implemente a procedure de cadastro com as seguintes regras de negócio: 
+	-- a. O nome deve ter pelo menos 3 caracteres e no máximo 30;
+    -- b. O campo e-mail é obrigatório e deverá ter pelo menos 10 caracteres;
+    -- c. Não poderá haver e-mails iguais;
+    -- d. O e-mail deve ter apenas um @;
+DELIMITER $$
+create procedure validar_nome(in nome varchar(30), out msg varchar(100)) 
+begin
+    if length(nome) < 3 or length(nome) > 30 then 
+		set msg = 'O nome do cliente deve conter entre 3 e 30 caracteres!';
+	end if;
+end $$
+DELIMITER ;
+
+
+DELIMITER $$
+create procedure validar_email(in email varchar(30), out msg varchar(100)) 
+begin
+	declare qtd int;
+    if length(email) > 10 then 
+		if (not(length(email) - length(replace(email,'@', '')) = 1)) then
+			set msg = 'Email pode conter apenas um @!';
+		else
+			select count(*) into qtd from clientes where email = email_cliente;
+            if qtd > 0 then
+				set msg = 'Já existe cliente cadastrado com esse email!';
+			end if;
+		end if;
+    else
+		set msg = 'Email deve conter ao menos 10 caracteres!';
+	end if;
+end $$
+DELIMITER ;
+   
+   
+DELIMITER $$
+create procedure cadastrar_cliente(in nome varchar(30), in email varchar(50)) 
+begin
+	declare msg varchar(100);   
+	declare codigo int;
+    set msg = '';
+
+    call validar_nome(nome, msg);
+    if msg is null then
+		call validar_email(email, msg);
+	end if;
+    if msg is null then
+		select ifnull(max(codigo_cliente), 0) + 1 into codigo from clientes;
+        insert into clientes(codigo_cliente, nome_cliente, email_cliente) 
+        values(codigo, nome, email);
+        set msg = 'Cliente cadastrado com sucesso!';
+	end if;
+    
+    select msg;
+end $$
+DELIMITER ;
+
+call cadastrar_cliente('Tiago', 'tiago@email.com');
+select * from clientes;
+
+
+-- 6) Criar uma procedure para efetuar a alteração de dados. Essa procedure deverá ter três parâmetros, sendo eles: O nome que desejamos alterar, o novo nome e o novo e-mail. Caso não tenha o nome informado, deverá retornar uma mensagem que o nome informado não existe.
+
+
+
+-- 7) Criar uma procedure para remover clientes através do nome. Retorne uma mensagem informando se a exclusão foi efetuada ou não.
+
+
+
+-- 8) Criar uma procedure para remover clientes através do e-mail. Retorne uma mensagem informando se a exclusão foi efetuada ou não.
+
+
