@@ -1180,7 +1180,7 @@ DELIMITER ;
 
 -- 7) Criar uma procedure para remover clientes através do nome. Retorne uma mensagem informando se a exclusão foi efetuada ou não.
 DELIMITER $$
-create procedure alterar_cliente(in nome varchar(30)) 
+create procedure remover_cliente(in nome varchar(30)) 
 begin
 	declare qtd int;
     declare msg varchar(100);
