@@ -1153,18 +1153,130 @@ begin
 end $$
 DELIMITER ;
 
-call cadastrar_cliente('Tiago', 'tiago@email.com');
-select * from clientes;
 
+-- 6) Criar uma procedure para efetuar a alteração de dados. Essa procedure deverá ter três parâmetros, sendo eles: O email que desejamos alterar, o novo nome e o novo e-mail. Caso não tenha o email informado, deverá retornar uma mensagem que o mesmo não existe.
+DELIMITER $$
+create procedure alterar_cliente(in email_atual varchar(30), in email_novo varchar(30), in nome varchar(30)) 
+begin
+	declare qtd int;
+    declare msg varchar(100);
+    
+    select count(*) into qtd from clientes where email_cliente = email_atual;
+    
+    if qtd > 0 then
+		update clientes set
+		email_cliente = email_novo,
+		nome_cliente = nome
+		where email_cliente = email_atual;
+        set msg = 'Dados do cliente alterados com sucesso!';
+    else
+		set msg = 'O cliente informado não existe!';
+    end if;
 
--- 6) Criar uma procedure para efetuar a alteração de dados. Essa procedure deverá ter três parâmetros, sendo eles: O nome que desejamos alterar, o novo nome e o novo e-mail. Caso não tenha o nome informado, deverá retornar uma mensagem que o nome informado não existe.
-
+    select msg;
+    end $$
+DELIMITER ;
 
 
 -- 7) Criar uma procedure para remover clientes através do nome. Retorne uma mensagem informando se a exclusão foi efetuada ou não.
+DELIMITER $$
+create procedure alterar_cliente(in nome varchar(30)) 
+begin
+	declare qtd int;
+    declare msg varchar(100);
+    
+    select count(*) into qtd from clientes where nome_cliente = nome;
+    
+    if qtd > 0 then
+		delete from clientes
+		where nome_cliente = nome;
+        set msg = 'Dados do cliente excluídos com sucesso!';
+    else
+		set msg = 'O cliente informado não existe!';
+    end if;
 
+    select msg;
+    end $$
+DELIMITER ;
 
 
 -- 8) Criar uma procedure para remover clientes através do e-mail. Retorne uma mensagem informando se a exclusão foi efetuada ou não.
+DELIMITER $$
+create procedure alterar_cliente(in email varchar(30)) 
+begin
+	declare qtd int;
+    declare msg varchar(100);
+    
+    select count(*) into qtd from clientes where email_cliente = email;
+    
+    if qtd > 0 then
+		delete from clientes
+		where email_cliente = email;
+        set msg = 'Dados do cliente excluídos com sucesso!';
+    else
+		set msg = 'O cliente informado não existe!';
+    end if;
 
+    select msg;
+    end $$
+DELIMITER ;
+
+
+
+
+
+#EXERCÍCIO 9
+create table produtos(
+    id_produto int primary key,
+    descricao_produto varchar(30),
+    valor_unitario float,
+    estoque float
+); 
+
+create table itens_carrinho(
+    id_carrinho int primary key,
+    id_produto int primary key,
+    quantidade float,
+    valor_unitario float,
+    constraint fk_produto foreign key (id_produto) references produtos(id_produto)
+);
+
+-- 1) Criar trigger para atualizar o estoque ao inserir, atualizar ou excluir um item;
+DELIMITER $
+create trigger tgr_inserir after insert
+on itens_carrinho
+for each row
+begin
+	update produtos set estoque = estoque - new.quantidade
+where id_produto = new.id_produto;
+end$
+
+create trigger tgr_deletar after delete
+on itens_carrinho
+for each row
+begin
+	update produtos set estoque = estoque + old.quantidade
+where id_produto = old.id_produto;
+end$
+
+create trigger tgr_atualizar after update
+on itens_carrinho
+for each row
+begin
+	update produtos set estoque = new.estoque - old.estoque
+where id_produto = old.id_produto;
+end$
+DELIMITER ;
+
+
+-- 2) Criar uma tabela para inserir o historico das movimentações ocorridas na tabela de produto. Informar chave primaria do item e qual foi a operação.
+    create table historico(
+    id_carrinho int primary key,
+    id_produto int primary key,
+    datahora datetime,
+    descricao varchar(100),
+	constraint fk_carrinho foreign key (id_carrinho) references itens_carrinho(id_carrinho),
+    constraint fk_produto foreign key (id_produto) references produtos(id_produto)
+);
+    
 
